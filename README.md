@@ -1,6 +1,6 @@
 # TwinS ORBIT.API
 
-.NET 8 / SQL Server tabanlı TwinS sunucu API'si. Bu depo kullanıcı JWT oturumlarını,
+.NET 8 / PostgreSQL tabanlı TwinS sunucu API'si. Bu depo kullanıcı JWT oturumlarını,
 akvaryum ve cihaz sahipliğini, Device Identity eşleştirmesini ve GRID cihaz
 heartbeat/telemetri altyapısını içerir.
 
@@ -9,7 +9,7 @@ heartbeat/telemetri altyapısını içerir.
 - Gerçek `appsettings.json`, `.env`, sertifika, veritabanı yedeği ve anahtar dosyaları Git'e alınmaz.
 - Üretimde sırlar yalnız sunucu secret store veya `/etc/orbit-api/orbit-api.env` gibi erişimi kısıtlı bir dosyadan verilir.
 - `Jwt__Key` en az 32 karakterlik kriptografik rastgele bir değer olmalıdır.
-- SQL bağlantısında `Encrypt=True;TrustServerCertificate=False` kullanılmalıdır.
+- Üretimde PostgreSQL bağlantısında TLS kullanılmalıdır (`SSL Mode=Require`).
 - API yalnız loopback üzerinde çalıştırılmalı; internet trafiği TLS sonlandıran Nginx üzerinden gelmelidir.
 - Cihaz sırları veritabanında yalnız SHA-256 özeti olarak tutulur ve loglanmaz.
 
@@ -18,7 +18,7 @@ heartbeat/telemetri altyapısını içerir.
 - Ubuntu 24.04 LTS veya Windows Server 2022
 - 2 vCPU, en az 2 GB RAM (önerilen 4 GB), 20 GB SSD
 - .NET 8 ASP.NET Core Runtime; build/migration için .NET 8 SDK
-- SQL Server 2022 / Azure SQL
+- PostgreSQL 16 (Npgsql / EF Core 8)
 - Nginx ve geçerli genel TLS sertifikası
 - Kalıcı fotoğraf dizini ve düzenli SQL/dosya yedeği
 
@@ -49,7 +49,7 @@ altında tutun. Örnek systemd ve Nginx dosyaları `deploy/` dizinindedir.
 
 ## Veritabanı kurulumu
 
-1. Boş `ORBIT` veritabanı ve yalnız bu veritabanında yetkili uygulama kullanıcısı oluşturun.
+1. Boş bir `orbit` veritabanı ve yalnız bu veritabanında yetkili uygulama kullanıcısı oluşturun.
 2. Veritabanının/yedeklerin anlık yedeğini alın.
 3. Migration listesini inceleyin:
    `dotnet ef migrations list --project ORBIT.API.csproj --startup-project ORBIT.API.csproj`

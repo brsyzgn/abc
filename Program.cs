@@ -70,7 +70,7 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseNpgsql(connectionString));
 builder.Services.AddSingleton<PasswordResetSecurity>();
 builder.Services.AddHttpClient<ResendPasswordResetCodeSender>(client =>
     client.BaseAddress = new Uri("https://api.resend.com/"));
@@ -107,10 +107,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 }
 
                 var dbContext = context.HttpContext.RequestServices.GetRequiredService<AppDbContext>();
+                // Npgsql translates DateTime.UtcNow inside a query to now() (timestamptz); capture it
+                // so it is sent as a parameter matching the "timestamp without time zone" columns.
+                var utcNow = DateTime.UtcNow;
                 var sessionIsActive = await dbContext.UserSessions.AnyAsync(session =>
                     session.Id == sessionId &&
                     session.RevokedAt == null &&
-                    session.ExpiresAt > DateTime.UtcNow);
+                    session.ExpiresAt > utcNow);
                 if (!sessionIsActive)
                 {
                     context.Fail("Session is no longer active.");
@@ -672,8 +675,8 @@ app.MapPost("/api/aquariums/{aquariumId:int}/devices", async (
     dbContext.Devices.Add(device);
     ActivityRecorder.Add(dbContext, userId, usedRecord is null ? "device.paired" : "device.reassigned", usedRecord is null ? "Cihaz eşleştirildi" : "Kullanılmış cihaz eşleştirildi", $"{device.DeviceType} cihazı akvaryuma eklendi.");
     try { await dbContext.SaveChangesAsync(); }
-    catch (DbUpdateException error) when (error.InnerException is Microsoft.Data.SqlClient.SqlException sql &&
-        sql.Number is 2601 or 2627)
+    catch (DbUpdateException error) when (error.InnerException is Npgsql.PostgresException postgres &&
+        postgres.SqlState == Npgsql.PostgresErrorCodes.UniqueViolation)
     {
         return Results.Conflict(new { code = "device_already_paired", message = "Cihaz başka bir istekle eşleştirildi; listeyi yenileyin." });
     }
@@ -1144,9 +1147,10 @@ app.MapPost("/api/auth/password-reset/complete", async (
     challenge.User!.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
     challenge.UsedAt = DateTime.UtcNow;
     ActivityRecorder.Add(dbContext, challenge.User.Id, "security.password_changed", "Parola değiştirildi", "Hesap parolanız sıfırlama akışıyla değiştirildi.");
+    var revokedAt = DateTime.UtcNow;
     await dbContext.UserSessions
         .Where(session => session.UserId == challenge.UserId && session.RevokedAt == null)
-        .ExecuteUpdateAsync(update => update.SetProperty(session => session.RevokedAt, DateTime.UtcNow));
+        .ExecuteUpdateAsync(update => update.SetProperty(session => session.RevokedAt, revokedAt));
     await dbContext.SaveChangesAsync();
     return Results.Ok(new { message = "Parola başarıyla güncellendi. Yeniden giriş yapabilirsiniz." });
 })

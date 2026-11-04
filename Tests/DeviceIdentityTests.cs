@@ -73,9 +73,6 @@ internal static class DeviceIdentityTests
         Check(DeviceIdentity.From(device)==identity && device.Name=="Kept name", "Descriptor does not modify identity/display name");
         Check(new CreateDeviceRequest{Identity=identity, ConnectionDescriptor=connection with {DeviceId=Guid.Empty}}
             .GetValidationError(out _,out _,out _) is not null, "Endpoint validates descriptor");
-        var connectionMigration = new ORBIT.API.Migrations.DeviceConnectionDescriptor();
-        Check(connectionMigration.UpOperations.Count==2 && connectionMigration.UpOperations
-            .OfType<AddColumnOperation>().All(c=>c.IsNullable && c.Table=="Devices"), "Only two nullable routing columns, no backfill");
         var upgraded = identity with { FirmwareVersion = new FirmwareVersion(2,3,4) };
         Check(upgraded.Key == identity.Key && upgraded.CompatibleHardware(device), "Firmware is not a key");
         upgraded.ApplyTo(device);
@@ -102,18 +99,22 @@ internal static class DeviceIdentityTests
                 .SequenceEqual(new[]{"ManufacturerId","ImmutableDeviceId"}));
             Check(unique.IsUnique && unique.GetFilter()!.Contains("IS NOT NULL"),"Filtered permanent key");
             Check(entity.GetIndexes().Single(i=>i.Properties.Count==1 &&
-                i.Properties[0].Name=="SerialNumber").GetFilter()=="[ManufacturerId] IS NULL", "Legacy-only serial index");
+                i.Properties[0].Name=="SerialNumber").GetFilter()=="\"ManufacturerId\" IS NULL", "Legacy-only serial index");
         }
-        var migration=new ORBIT.API.Migrations.DeviceIdentityV1();
-        Check(migration.UpOperations.OfType<AddColumnOperation>().Count()==16, "8 nullable fields per table");
-        Check(migration.UpOperations.OfType<AddColumnOperation>().All(c=>c.IsNullable), "Old rows stay legacy");
+        // The PostgreSQL baseline migration must only create objects: no deletion, no raw SQL backfill.
+        var migration=new ORBIT.API.Migrations.InitialPostgres();
+        Check(migration.UpOperations.OfType<CreateTableOperation>().Count()==9, "Baseline creates the 9 application tables");
         Check(!migration.UpOperations.Any(o=>o is DropTableOperation or DropColumnOperation or SqlOperation),
-            "No deletion or automatic legacy backfill in Up");
+            "No deletion or raw SQL in Up");
         // Generate SQL only: never open a database connection.
-        var sql=db.GetService<IMigrator>().GenerateScript(
-            "20260807185950_AddRegistrationEmailVerification", "20260831202030_DeviceIdentityV1");
-        Check(sql.Contains("CREATE UNIQUE INDEX") && sql.Contains("[ManufacturerId], [ImmutableDeviceId]"),
+        var sql=db.GetService<IMigrator>().GenerateScript();
+        Check(sql.Contains("CREATE UNIQUE INDEX \"IX_Devices_ManufacturerId_ImmutableDeviceId\"") &&
+              sql.Contains("(\"ManufacturerId\", \"ImmutableDeviceId\")"),
             "Migration SQL contains the permanent key");
+        Check(sql.Contains("\"IX_Devices_SerialNumber\" ON \"Devices\" (\"SerialNumber\") WHERE \"ManufacturerId\" IS NULL"),
+            "Legacy serial index is filtered to legacy rows");
+        Check(sql.Contains("timestamp without time zone") && !sql.Contains("timestamp with time zone"),
+            "Timestamps keep the SQL Server (no time zone) contract");
         Console.WriteLine("Device Identity policy/model/migration checks passed (no database connection).");
     }
 }

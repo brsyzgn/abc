@@ -12,7 +12,7 @@ static class PairingTransactionTests
             !PairingTransactions.OwnsNewRecord("pairing.complete.new")) throw new Exception("New record compensation missing.");
         // SQL generation only: no database connection, schema change or write.
         using var db = new AppDbContext(new DbContextOptionsBuilder<AppDbContext>()
-            .UseSqlServer("Server=unused;Database=unused;Integrated Security=true;TrustServerCertificate=true").Options);
+            .UseNpgsql("Host=unused;Database=unused;Username=unused;Password=unused").Options);
         var listSql = db.Devices.Where(d => d.AquariumId == 1).ToQueryString();
         if (!listSql.Contains("NOT EXISTS") || !listSql.Contains("pairing.pending.new"))
             throw new Exception("Pending pairing must be hidden from device lists.");

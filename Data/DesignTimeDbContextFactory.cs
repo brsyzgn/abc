@@ -7,6 +7,6 @@ namespace ORBIT.API.Data;
 public sealed class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
 {
     public AppDbContext CreateDbContext(string[] args) => new(
-        new DbContextOptionsBuilder<AppDbContext>().UseSqlServer(
-            "Server=127.0.0.1,1;Database=ORBIT_DesignTimeOnly;User Id=unused;Password=unused;Connect Timeout=1;TrustServerCertificate=True").Options);
+        new DbContextOptionsBuilder<AppDbContext>().UseNpgsql(
+            "Host=127.0.0.1;Port=1;Database=orbit_designtime_only;Username=unused;Password=unused;Timeout=1").Options);
 }

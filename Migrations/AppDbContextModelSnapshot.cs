@@ -2,8 +2,8 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using ORBIT.API.Data;
 
 #nullable disable
@@ -17,10 +17,10 @@ namespace ORBIT.API.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.10")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+                .HasAnnotation("ProductVersion", "8.0.11")
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("ORBIT.API.Models.ActivityEvent", b =>
                 {
@@ -28,28 +28,28 @@ namespace ORBIT.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("EventType")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.Property<string>("Message")
                         .IsRequired()
                         .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("character varying(500)");
 
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(120)
-                        .HasColumnType("nvarchar(120)");
+                        .HasColumnType("character varying(120)");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -62,28 +62,28 @@ namespace ORBIT.API.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("PhotoObjectKey")
                         .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
+                        .HasColumnType("character varying(64)");
 
                     b.Property<string>("PhotoUrl")
                         .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("character varying(500)");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -96,97 +96,97 @@ namespace ORBIT.API.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AquariumId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("ConnectionSsid")
                         .HasMaxLength(32)
-                        .HasColumnType("nvarchar(32)");
+                        .HasColumnType("character varying(32)");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<DateTime?>("DeviceCredentialCreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("DeviceCredentialHash")
                         .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
+                        .HasColumnType("character varying(64)");
 
                     b.Property<string>("DeviceType")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("character varying(20)");
 
                     b.Property<int?>("FirmwareMajor")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int?>("FirmwareMinor")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int?>("FirmwarePatch")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int?>("HardwareRevision")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int?>("IdentitySchemaVersion")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<Guid?>("ImmutableDeviceId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<bool>("IsOnline")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<DateTime?>("LastSeenAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("LocalApiBaseUrl")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("character varying(256)");
 
                     b.Property<Guid?>("ManufacturerId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<int?>("ProductTypeCode")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("SerialNumber")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<int>("SortOrder")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
                     b.HasIndex("AquariumId");
 
                     b.HasIndex("LastSeenAt")
-                        .HasFilter("[LastSeenAt] IS NOT NULL");
+                        .HasFilter("\"LastSeenAt\" IS NOT NULL");
 
                     b.HasIndex("SerialNumber")
                         .IsUnique()
-                        .HasFilter("[ManufacturerId] IS NULL");
+                        .HasFilter("\"ManufacturerId\" IS NULL");
 
                     b.HasIndex("ManufacturerId", "ImmutableDeviceId")
                         .IsUnique()
-                        .HasFilter("[ManufacturerId] IS NOT NULL AND [ImmutableDeviceId] IS NOT NULL");
+                        .HasFilter("\"ManufacturerId\" IS NOT NULL AND \"ImmutableDeviceId\" IS NOT NULL");
 
                     b.ToTable("Devices", null, t =>
                         {
-                            t.HasCheckConstraint("CK_Devices_IdentityV1", "(([ManufacturerId] IS NULL AND [ImmutableDeviceId] IS NULL AND [IdentitySchemaVersion] IS NULL AND [ProductTypeCode] IS NULL AND [HardwareRevision] IS NULL AND [FirmwareMajor] IS NULL AND [FirmwareMinor] IS NULL AND [FirmwarePatch] IS NULL) OR ([ManufacturerId] IS NOT NULL AND [ImmutableDeviceId] IS NOT NULL AND [IdentitySchemaVersion] IS NOT NULL AND [ProductTypeCode] IS NOT NULL AND [HardwareRevision] IS NOT NULL AND [FirmwareMajor] IS NOT NULL AND [FirmwareMinor] IS NOT NULL AND [FirmwarePatch] IS NOT NULL AND [ManufacturerId] = '40b635de-f7d1-48e6-ae89-0977a3495e3e' AND [ImmutableDeviceId] <> '00000000-0000-0000-0000-000000000000' AND [IdentitySchemaVersion] = 1 AND [ProductTypeCode] IN (1,2,3) AND [HardwareRevision] BETWEEN 1 AND 65535 AND [FirmwareMajor] BETWEEN 0 AND 65535 AND [FirmwareMinor] BETWEEN 0 AND 65535 AND [FirmwarePatch] BETWEEN 0 AND 65535))");
+                            t.HasCheckConstraint("CK_Devices_IdentityV1", "((\"ManufacturerId\" IS NULL AND \"ImmutableDeviceId\" IS NULL AND \"IdentitySchemaVersion\" IS NULL AND \"ProductTypeCode\" IS NULL AND \"HardwareRevision\" IS NULL AND \"FirmwareMajor\" IS NULL AND \"FirmwareMinor\" IS NULL AND \"FirmwarePatch\" IS NULL) OR (\"ManufacturerId\" IS NOT NULL AND \"ImmutableDeviceId\" IS NOT NULL AND \"IdentitySchemaVersion\" IS NOT NULL AND \"ProductTypeCode\" IS NOT NULL AND \"HardwareRevision\" IS NOT NULL AND \"FirmwareMajor\" IS NOT NULL AND \"FirmwareMinor\" IS NOT NULL AND \"FirmwarePatch\" IS NOT NULL AND \"ManufacturerId\" = '40b635de-f7d1-48e6-ae89-0977a3495e3e' AND \"ImmutableDeviceId\" <> '00000000-0000-0000-0000-000000000000' AND \"IdentitySchemaVersion\" = 1 AND \"ProductTypeCode\" IN (1,2,3) AND \"HardwareRevision\" BETWEEN 1 AND 65535 AND \"FirmwareMajor\" BETWEEN 0 AND 65535 AND \"FirmwareMinor\" BETWEEN 0 AND 65535 AND \"FirmwarePatch\" BETWEEN 0 AND 65535))");
                         });
                 });
 
@@ -196,19 +196,19 @@ namespace ORBIT.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<int>("DeviceId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<float>("InputVoltage")
                         .HasColumnType("real");
 
                     b.Property<DateTime>("ReceivedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<byte>("RelayMask")
-                        .HasColumnType("tinyint");
+                        .HasColumnType("smallint");
 
                     b.Property<float?>("TemperatureC")
                         .HasColumnType("real");
@@ -217,7 +217,7 @@ namespace ORBIT.API.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<bool>("WaterAlarm")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.HasKey("Id");
 
@@ -232,37 +232,37 @@ namespace ORBIT.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("CodeHash")
                         .IsRequired()
                         .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("character varying(128)");
 
                     b.Property<DateTime?>("CodeVerifiedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<DateTime>("ExpiresAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<int>("FailedAttempts")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<DateTime?>("ResetTokenExpiresAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("ResetTokenHash")
                         .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("character varying(128)");
 
                     b.Property<DateTime?>("UsedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -277,27 +277,27 @@ namespace ORBIT.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("CodeHash")
                         .IsRequired()
                         .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("character varying(128)");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<DateTime>("ExpiresAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<int>("FailedAttempts")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<DateTime?>("UsedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -310,68 +310,68 @@ namespace ORBIT.API.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("DeviceType")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("character varying(20)");
 
                     b.Property<int?>("FirmwareMajor")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int?>("FirmwareMinor")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int?>("FirmwarePatch")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int?>("HardwareRevision")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int?>("IdentitySchemaVersion")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<Guid?>("ImmutableDeviceId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<DateTime>("LastUsedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<int>("LastUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<Guid?>("ManufacturerId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<int?>("ProductTypeCode")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("SerialNumber")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("SerialNumber")
                         .IsUnique()
-                        .HasFilter("[ManufacturerId] IS NULL");
+                        .HasFilter("\"ManufacturerId\" IS NULL");
 
                     b.HasIndex("ManufacturerId", "ImmutableDeviceId")
                         .IsUnique()
-                        .HasFilter("[ManufacturerId] IS NOT NULL AND [ImmutableDeviceId] IS NOT NULL");
+                        .HasFilter("\"ManufacturerId\" IS NOT NULL AND \"ImmutableDeviceId\" IS NOT NULL");
 
                     b.ToTable("UsedDeviceRecords", null, t =>
                         {
-                            t.HasCheckConstraint("CK_UsedDeviceRecords_IdentityV1", "(([ManufacturerId] IS NULL AND [ImmutableDeviceId] IS NULL AND [IdentitySchemaVersion] IS NULL AND [ProductTypeCode] IS NULL AND [HardwareRevision] IS NULL AND [FirmwareMajor] IS NULL AND [FirmwareMinor] IS NULL AND [FirmwarePatch] IS NULL) OR ([ManufacturerId] IS NOT NULL AND [ImmutableDeviceId] IS NOT NULL AND [IdentitySchemaVersion] IS NOT NULL AND [ProductTypeCode] IS NOT NULL AND [HardwareRevision] IS NOT NULL AND [FirmwareMajor] IS NOT NULL AND [FirmwareMinor] IS NOT NULL AND [FirmwarePatch] IS NOT NULL AND [ManufacturerId] = '40b635de-f7d1-48e6-ae89-0977a3495e3e' AND [ImmutableDeviceId] <> '00000000-0000-0000-0000-000000000000' AND [IdentitySchemaVersion] = 1 AND [ProductTypeCode] IN (1,2,3) AND [HardwareRevision] BETWEEN 1 AND 65535 AND [FirmwareMajor] BETWEEN 0 AND 65535 AND [FirmwareMinor] BETWEEN 0 AND 65535 AND [FirmwarePatch] BETWEEN 0 AND 65535))");
+                            t.HasCheckConstraint("CK_UsedDeviceRecords_IdentityV1", "((\"ManufacturerId\" IS NULL AND \"ImmutableDeviceId\" IS NULL AND \"IdentitySchemaVersion\" IS NULL AND \"ProductTypeCode\" IS NULL AND \"HardwareRevision\" IS NULL AND \"FirmwareMajor\" IS NULL AND \"FirmwareMinor\" IS NULL AND \"FirmwarePatch\" IS NULL) OR (\"ManufacturerId\" IS NOT NULL AND \"ImmutableDeviceId\" IS NOT NULL AND \"IdentitySchemaVersion\" IS NOT NULL AND \"ProductTypeCode\" IS NOT NULL AND \"HardwareRevision\" IS NOT NULL AND \"FirmwareMajor\" IS NOT NULL AND \"FirmwareMinor\" IS NOT NULL AND \"FirmwarePatch\" IS NOT NULL AND \"ManufacturerId\" = '40b635de-f7d1-48e6-ae89-0977a3495e3e' AND \"ImmutableDeviceId\" <> '00000000-0000-0000-0000-000000000000' AND \"IdentitySchemaVersion\" = 1 AND \"ProductTypeCode\" IN (1,2,3) AND \"HardwareRevision\" BETWEEN 1 AND 65535 AND \"FirmwareMajor\" BETWEEN 0 AND 65535 AND \"FirmwareMinor\" BETWEEN 0 AND 65535 AND \"FirmwarePatch\" BETWEEN 0 AND 65535))");
                         });
                 });
 
@@ -379,32 +379,32 @@ namespace ORBIT.API.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("character varying(200)");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<DateTime?>("LastLogin")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -415,27 +415,27 @@ namespace ORBIT.API.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("DeviceId")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("character varying(200)");
 
                     b.Property<DateTime>("ExpiresAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<bool>("RememberMe")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<DateTime?>("RevokedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
