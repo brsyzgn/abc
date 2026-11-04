@@ -1,0 +1,24 @@
+[Unit]
+Description=TwinS ORBIT API
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=notify
+WorkingDirectory=/opt/orbit-api
+ExecStart=/usr/bin/dotnet /opt/orbit-api/ORBIT.API.dll
+Restart=always
+RestartSec=5
+User=orbit
+Group=orbit
+Environment=ASPNETCORE_ENVIRONMENT=Production
+Environment=ASPNETCORE_URLS=http://127.0.0.1:5080
+EnvironmentFile=/etc/orbit-api/orbit-api.env
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/orbit-api
+
+[Install]
+WantedBy=multi-user.target

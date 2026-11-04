@@ -1,0 +1,38 @@
+bin/
+obj/
+.artifacts/
+publish/
+TestResults/
+*.log
+*.zip
+
+# Local configuration contains database credentials and JWT signing material.
+appsettings.json
+appsettings.Production.json
+appsettings.Staging.json
+!appsettings.example.json
+!appsettings.Production.example.json
+
+# Never commit runtime secrets, certificates, database backups or local env files.
+.env
+.env.*
+!.env.example
+secrets/
+*.pfx
+*.p12
+*.pem
+*.key
+*.cer
+*.crt
+*.bak
+*.bacpac
+*.mdf
+*.ldf
+
+# IDE and user-specific files.
+.vs/
+*.user
+*.suo
+
+# Development photo storage.
+App_Data/
